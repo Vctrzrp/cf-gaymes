@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react'
-import { getFeaturedCompetition } from '../services/competitionService'
+import {
+  getGeneralLeaderboard,
+  getPublicHome,
+  getWodLeaderboard
+} from '../services/competitionService'
 import { mockCompetition } from '../data/mockCompetition'
 import type { Competition } from '../types/competition'
 
@@ -17,16 +21,27 @@ export function useFeaturedCompetition(): FeaturedCompetitionState {
   useEffect(() => {
     let active = true
 
-    getFeaturedCompetition()
-      .then(data => {
-        if (active) {
-          setCompetition({
-            ...data,
-            // Temporalmente mantenemos los WODs de demostración completos,
-            // incluyendo actividades y leaderboard para los modales.
-            wods: mockCompetition.wods
-          })
-        }
+    getPublicHome()
+      .then(async data => {
+        const [generalResult, ...wodResults] = await Promise.allSettled([
+          getGeneralLeaderboard(),
+          ...(data.wods ?? []).map(wod => getWodLeaderboard(wod.id))
+        ])
+
+        if (!active) return
+
+        setCompetition({
+          ...data,
+          leaderboard: generalResult.status === 'fulfilled'
+            ? generalResult.value
+            : data.leaderboard,
+          wods: (data.wods ?? []).map((wod, index) => ({
+            ...wod,
+            leaderboard: wodResults[index]?.status === 'fulfilled'
+              ? wodResults[index].value
+              : wod.leaderboard
+          }))
+        })
       })
       .catch(() => {
         if (active) setUsingFallback(true)

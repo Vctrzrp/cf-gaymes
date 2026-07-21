@@ -13,6 +13,7 @@
     "axios": "^1.11.0",
     "lucide-react": "^0.468.0",
     "ra-data-simple-rest": "^5.15.0",
+    "ra-language-spanish": "^1.0.0",
     "react": "^19.1.1",
     "react-admin": "^5.15.1",
     "react-dom": "^19.1.1",

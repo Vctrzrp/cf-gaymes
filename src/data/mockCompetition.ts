@@ -17,6 +17,14 @@ export const mockCompetition: Competition = {
     { id: 'scaled-men', name: 'Scaled Hombres', capacity: 20, registered: 18 },
     { id: 'scaled-women', name: 'Scaled Mujeres', capacity: 20, registered: 16 }
   ],
+  mapsUrl: 'https://maps.app.goo.gl/unLjT3s9eNCSsKbMA',
+  leaderboard: [
+    { position: 1, participantId: 'participant-1', name: 'Valentina Rojas', points: 382 },
+    { position: 2, participantId: 'participant-2', name: 'Martina Silva', points: 354 },
+    { position: 3, participantId: 'participant-3', name: 'Alex González', points: 327 },
+    { position: 4, participantId: 'participant-4', name: 'Camila Soto', points: 291 },
+    { position: 5, participantId: 'participant-5', name: 'Diego Morales', points: 263 }
+  ],
   wods: [
     {
       id: 'wod-1', name: 'WOD 1', date: '2026-08-08',

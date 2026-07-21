@@ -5,17 +5,10 @@ interface CompetitionDetailsProps {
   competition: Competition
 }
 
-const currentScores = [
-  { name: 'Valentina Rojas', points: 382 },
-  { name: 'Martina Silva', points: 354 },
-  { name: 'Alex González', points: 327 },
-  { name: 'Camila Soto', points: 291 },
-  { name: 'Diego Morales', points: 263 }
-]
-
-const maxScore = Math.max(...currentScores.map(participant => participant.points))
-
 export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
+  const currentScores = competition.leaderboard ?? []
+  const maxScore = Math.max(0, ...currentScores.map(participant => participant.points))
+
   return (
     <section className="panel panel--details">
       <div className="section-heading">
@@ -27,7 +20,7 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
 
       <div className="location-card">
         <a
-          href="https://maps.app.goo.gl/unLjT3s9eNCSsKbMA"
+          href={competition.mapsUrl ?? 'https://maps.app.goo.gl/unLjT3s9eNCSsKbMA'}
           target="_blank"
           rel="noreferrer"
           aria-label="Ver Ludus Centro en Google Maps"
@@ -35,7 +28,7 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
           <MapPin />
           <span>
             <small>Ubicación</small>
-            <strong>Ludus Centro</strong>
+            <strong>{competition.location}</strong>
           </span>
           <ExternalLink size={18} />
         </a>
@@ -51,12 +44,13 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
         </div>
 
         <div className="score-chart__rows">
+          {currentScores.length === 0 && <p>Aún no hay puntuaciones registradas.</p>}
           {currentScores.map((participant, index) => (
-            <div className="score-row" key={participant.name}>
-              <span className="score-row__position">{index + 1}</span>
+            <div className="score-row" key={participant.participantId}>
+              <span className="score-row__position">{participant.position ?? index + 1}</span>
               <span className="score-row__name">{participant.name}</span>
               <div className="score-row__track" aria-hidden="true">
-                <span style={{ width: `${(participant.points / maxScore) * 100}%` }} />
+                <span style={{ width: `${maxScore ? (participant.points / maxScore) * 100 : 0}%` }} />
               </div>
               <strong>{participant.points} pts</strong>
             </div>

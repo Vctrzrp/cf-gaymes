@@ -5,6 +5,13 @@ interface HeroProps {
   competition: Competition
 }
 
+const formatEventDate = (value: string) => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return value
+  return new Intl.DateTimeFormat('es-CL', {
+    day: '2-digit', month: 'short', year: 'numeric'
+  }).format(new Date(`${value}T00:00:00`)).toUpperCase()
+}
+
 export function Hero({ competition }: HeroProps) {
   return (
     <section className="hero">
@@ -16,9 +23,9 @@ export function Hero({ competition }: HeroProps) {
           <p>{competition.subtitle}</p>
 
           <div className="hero__meta">
-            <span><CalendarDays size={17} /> {competition.eventStart} — {competition.eventEnd}</span>
+            <span><CalendarDays size={17} /> {formatEventDate(competition.eventStart)} — {formatEventDate(competition.eventEnd)}</span>
             <a
-              href="https://maps.app.goo.gl/unLjT3s9eNCSsKbMA"
+              href={competition.mapsUrl ?? 'https://maps.app.goo.gl/unLjT3s9eNCSsKbMA'}
               target="_blank"
               rel="noreferrer"
               aria-label="Ver Ludus Centro en Google Maps"
