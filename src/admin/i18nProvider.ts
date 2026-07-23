@@ -14,7 +14,8 @@ const messages = {
       move_up: 'Mover hacia arriba',
       move_down: 'Mover hacia abajo',
       toggle_theme: 'Cambiar modo claro/oscuro',
-      close: 'Cerrar'
+      close: 'Cerrar',
+      unselect: 'Deseleccionar'
     },
     message: {
       ...spanishMessages.ra.message,
@@ -23,6 +24,11 @@ const messages = {
     navigation: {
       ...spanishMessages.ra.navigation,
       page_rows_per_page: 'Filas por página:'
+    },
+    sort: {
+      ...spanishMessages.ra.sort,
+      ASC: 'Ascendente',
+      DESC: 'Descendente'
     }
   }
 }

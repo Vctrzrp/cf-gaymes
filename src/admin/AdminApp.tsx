@@ -1,6 +1,6 @@
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
 import GroupsIcon from '@mui/icons-material/Groups'
-import { Admin, CustomRoutes, fetchUtils, Resource } from 'react-admin'
+import { Admin, CustomRoutes, fetchUtils, Resource, type RaRecord } from 'react-admin'
 import simpleRestProvider from 'ra-data-simple-rest'
 import { Route } from 'react-router-dom'
 import { env } from '../config/env'
@@ -20,7 +20,37 @@ const httpClient = (url: string, options: fetchUtils.Options = {}) => {
   return fetchUtils.fetchJson(url, { ...options, headers })
 }
 
-const dataProvider = simpleRestProvider(env.apiBaseUrl, httpClient)
+const baseDataProvider = simpleRestProvider(env.apiBaseUrl, httpClient)
+
+const editableFields: Record<string, string[]> = {
+  wods: ['name', 'date', 'activities'],
+  participants: ['firstName', 'lastName', 'status']
+}
+
+const sanitizeRecord = (resource: string, record: Partial<RaRecord>) => {
+  const allowed = editableFields[resource]
+  if (!allowed) {
+    const { id: _id, createdAt: _createdAt, updatedAt: _updatedAt, ...data } = record
+    return data
+  }
+  return Object.fromEntries(
+    allowed
+      .filter(field => field in record)
+      .map(field => [field, record[field]])
+  )
+}
+
+const dataProvider = {
+  ...baseDataProvider,
+  create: (resource, params) => baseDataProvider.create(resource, {
+    ...params,
+    data: sanitizeRecord(resource, params.data)
+  }),
+  update: (resource, params) => baseDataProvider.update(resource, {
+    ...params,
+    data: sanitizeRecord(resource, params.data)
+  })
+} satisfies typeof baseDataProvider
 
 export function AdminApp() {
   return (

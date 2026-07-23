@@ -5,26 +5,44 @@ import { CompetitionDetails } from '../components/home/CompetitionDetails'
 import { useFeaturedCompetition } from '../hooks/useFeaturedCompetition'
 
 export function HomePage() {
-  const { competition, loading, usingFallback } = useFeaturedCompetition()
+  const { competition, loading, error } = useFeaturedCompetition()
 
   return (
     <div className="app-shell">
       <Header />
       <main>
-        {usingFallback && (
-          <div className="status-banner">
-            Mostrando información de demostración mientras el backend no está disponible.
+        {loading && (
+          <section className="home-loading" aria-live="polite" aria-busy="true">
+            <div className="home-loading__heading">
+              <strong>Cargando Crossfit Gaymes</strong>
+              <span>Obteniendo información de la competencia…</span>
+            </div>
+            <div
+              className="home-loading__track"
+              role="progressbar"
+              aria-label="Cargando información"
+            >
+              <span />
+            </div>
+          </section>
+        )}
+
+        {!loading && error && (
+          <div className="status-banner status-banner--error" role="alert">
+            {error}
           </div>
         )}
 
-        <Hero competition={competition} />
+        {!loading && competition && (
+          <>
+            <Hero competition={competition} />
 
-        <div className="content-grid">
-          <WodList wods={competition.wods ?? []} />
-          <CompetitionDetails competition={competition} />
-        </div>
-
-        {loading && <span className="sr-only">Cargando información...</span>}
+            <div className="content-grid">
+              <WodList wods={competition.wods ?? []} />
+              <CompetitionDetails competition={competition} />
+            </div>
+          </>
+        )}
       </main>
 
       <footer>

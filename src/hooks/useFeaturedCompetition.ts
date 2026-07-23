@@ -4,19 +4,18 @@ import {
   getPublicHome,
   getWodLeaderboard
 } from '../services/competitionService'
-import { mockCompetition } from '../data/mockCompetition'
 import type { Competition } from '../types/competition'
 
 interface FeaturedCompetitionState {
-  competition: Competition
+  competition: Competition | null
   loading: boolean
-  usingFallback: boolean
+  error: string | null
 }
 
 export function useFeaturedCompetition(): FeaturedCompetitionState {
-  const [competition, setCompetition] = useState<Competition>(mockCompetition)
+  const [competition, setCompetition] = useState<Competition | null>(null)
   const [loading, setLoading] = useState(true)
-  const [usingFallback, setUsingFallback] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     let active = true
@@ -44,7 +43,9 @@ export function useFeaturedCompetition(): FeaturedCompetitionState {
         })
       })
       .catch(() => {
-        if (active) setUsingFallback(true)
+        if (!active) return
+        setCompetition(null)
+        setError('No fue posible cargar la información. Inténtalo nuevamente en unos momentos.')
       })
       .finally(() => {
         if (active) setLoading(false)
@@ -55,5 +56,5 @@ export function useFeaturedCompetition(): FeaturedCompetitionState {
     }
   }, [])
 
-  return { competition, loading, usingFallback }
+  return { competition, loading, error }
 }
